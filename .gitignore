@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+virt/  # Or the name of your virtual environment directory
+*.sqlite3 # Or your database file if you are keeping it within the project.
+.idea/   # If you are using IntelliJ IDEA
