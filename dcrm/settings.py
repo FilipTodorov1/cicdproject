@@ -74,16 +74,19 @@ WSGI_APPLICATION = "dcrm.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+import os
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "djangoappdb",
-        "USER": "root",
-        "PASSWORD": "Fitz1234",
-        "HOST": "localhost",
-        "PORT": "3306",
+        "NAME": os.getenv("DB_NAME", "djangoappdb"),
+        "USER": os.getenv("DB_USER", "root"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "Fitz1234"),
+        "HOST": os.getenv("DB_HOST", "mysql-db"),
+        "PORT": os.getenv("DB_PORT", "3306"),
     }
 }
+
 
 
 # Password validation
