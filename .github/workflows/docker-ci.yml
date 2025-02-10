@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master  # Change this to "master" since your branch is "master"
 
 jobs:
   build-and-push:
@@ -15,17 +15,17 @@ jobs:
       - name: Log in to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}  # Must match GitHub secret name
+          password: ${{ secrets.DOCKERHUB_TOKEN }}     # Must match GitHub secret name
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: filiptodorov/django-app:latest
+          tags: filiptodorov/django-app:latest  # Replace with your DockerHub image name
 
-  deploy:
+  deploy:  # Optional CD part (for bonus points)
     runs-on: ubuntu-latest
     needs: build-and-push
     steps:
