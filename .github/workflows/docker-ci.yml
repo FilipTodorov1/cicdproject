@@ -43,9 +43,7 @@ jobs:
 
       - name: Add Server to Known Hosts
         run: |
-          echo "Running ssh-keyscan..."
-          ssh-keyscan -v -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts || echo "ssh-keyscan failed"
-          cat ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Server
         run: |
