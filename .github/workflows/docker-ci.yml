@@ -28,12 +28,12 @@ jobs:
     # Step 4: Build the Docker image
     - name: Build the Docker image
       run: |
-        docker build -t my-image-name .
+        docker build -t django-app .
 
     # Step 5: Run the Docker container
     - name: Run the Docker container
       run: |
-        docker run -d -p 8000:8000 my-image-name
+        docker run -d -p 8000:8000 django-app
 
     # Step 6: Optionally check if the container is running
     - name: Check if the container is running
