@@ -7,5 +7,6 @@ data:
   DB_NAME: "djangoappdb"
   DB_HOST: "mysql-db"
   DB_PORT: "3306"
-  ALLOWED_HOSTS: "django-app.local,localhost,127.0.0.1"  # Add this line
+  ALLOWED_HOSTS: "django-app.local,localhost,127.0.0.1"
   DEBUG: "True"
+
