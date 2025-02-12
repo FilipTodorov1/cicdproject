@@ -1,0 +1,89 @@
+---
+  # MySQL Persistent Volume Claim (PVC)
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: mysql-pvc
+    namespace: django-app
+  spec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 2Gi
+  
+  ---
+  # MySQL ConfigMap
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: mysql-config
+    namespace: django-app
+  data:
+    MYSQL_DATABASE: "djangoappdb"
+  
+  ---
+  # MySQL Secret
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: mysql-secret
+    namespace: django-app
+  type: Opaque
+  data:
+    MYSQL_ROOT_PASSWORD: Rml0ejEyMzQ=  # echo -n "Fitz1234" | base64
+  
+  ---
+  # MySQL StatefulSet
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: mysql-db
+    namespace: django-app
+  spec:
+    serviceName: mysql-db
+    replicas: 1
+    selector:
+      matchLabels:
+        app: mysql
+    template:
+      metadata:
+        labels:
+          app: mysql
+      spec:
+        containers:
+          - name: mysql
+            image: mysql:8.0
+            envFrom:
+              - configMapRef:
+                  name: mysql-config
+              - secretRef:
+                  name: mysql-secret
+            ports:
+              - containerPort: 3306
+            volumeMounts:
+              - name: mysql-data
+                mountPath: /var/lib/mysql
+    volumeClaimTemplates:
+      - metadata:
+          name: mysql-data
+        spec:
+          accessModes: [ "ReadWriteOnce" ]
+          resources:
+            requests:
+              storage: 2Gi
+  
+  ---
+  # MySQL Service
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: mysql-db
+    namespace: django-app
+  spec:
+    selector:
+      app: mysql
+    ports:
+      - protocol: TCP
+        port: 3306
+        targetPort: 3306

@@ -1,0 +1,63 @@
+---
+# ConfigMap for Django Application
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config
+  namespace: django-app
+data:
+  DB_NAME: "djangoappdb"
+  DB_HOST: "mysql-db"  # Matches the MySQL Service name
+  DB_PORT: "3306"
+  ALLOWED_HOSTS: "*"
+  DEBUG: "True"
+
+---
+# Secret for MySQL Credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secret
+  namespace: django-app
+type: Opaque
+data:
+  DB_USER: cm9vdA==        # echo -n "root" | base64
+  DB_PASSWORD: Rml0ejEyMzQ=  # echo -n "Fitz1234" | base64
+
+---
+# Django Application Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+  namespace: django-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+        - name: django-app
+          image: filiptodorov/django-app:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: django-config
+            - secretRef:
+                name: django-secret
+          env:
+            - name: DATABASE_URL
+              value: "mysql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+            - name: SECRET_KEY
+              value: "django-insecure-=-(c55=wwufyj_h5$w8ar&&onb9v12f7-ejku!^0u78atasua^"
+          command: ["sh", "-c"]
+          args:
+            - |
+              python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000

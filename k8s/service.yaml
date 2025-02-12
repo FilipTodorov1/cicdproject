@@ -1,0 +1,15 @@
+---
+# Django Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+  namespace: django-app
+spec:
+  selector:
+    app: django-app
+  type: NodePort  # Use NodePort for local clusters
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
